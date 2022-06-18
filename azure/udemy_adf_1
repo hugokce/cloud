@@ -1,0 +1,188 @@
+
+
+
+azure portal dedik
+azure.microsoft.com 
+free account seçtik
+
+What Is Azure Data Factory
+Data Factory:
+Hybrid data integration service that simplifies ETL at scale. 
+The Azure Data Factory service is a fully managed service for composing data storage,processing,
+and movement services into streamlined, scalable, and reliable data production pipelines.
+
+Azure Data Factory, is a data integration service that allows creation of data-driven workflows 
+in the cloud for orchestrating and automating data movement and data transformation.
+
+ders3
+azure sql db
+create source
+sql db
+pay as you go
+resource group eklenebilir istersek dp200 seçtik
+db name belirleriz AZURE_SQL_db dedik
+Server seçelim yoksa create deriz
+unique bir ad veririz  step2cdbnew dedik adına
+login ayarlarını yaparız  demo dedik ve şifre verdik
+location US seçtik
+elastic pool kullanmıyoruz
+compute + storage configure dedik
+vcore varsa farklı seçebiliriz
+şimdi basic 5dtu veriyor
+standardta dtu arttıkça data size büyüyor
+db transaction unit
+şimdi basic seçtik 5dtu diyor aylık bir meblağ veriyor bize
+networkte birşey seçmedik
+additional settingste backuplı simple ya da none var.
+ sample dersek advworks sample olarak gelir
+TAg seçmedik
+review and create kısmında create deyince oluşur
+
+create storage:
+create resource dedik yine
+storage account dedik
+pay as you go dedik
+resource group oluşturulabilir
+dp-200 seçtik
+storage account name verdik sastep2cadf
+performance standart dedik
+account kind için storagev2 dedik
+replication için locally redundant seçtik
+access tier için hot seçtik
+
+networkin öyle bıraktık
+data protection için bıraktık
+advanced için bıraktık
+review and create create dedik  oluştu
+
+create azure data factory instance:
+şimdi source ve destination sistemler hazır 
+ADF oluşturalım
+create resource data factory dedik
+yine bir ad verelim adfstep2cnew 
+version v2 seçtik
+pay as you go dedik
+resource group için dp-200 dedik
+location east us dedik
+enable git kaldırdık kullanmayacağız
+şimdi create diyelim
+
+access azure sql db:
+şimdi resource groupa gidelim
+dp-200 açalım altında 4 tane satır geldi
+azuresqldb  okuma 
+sastep2cadf  yazma
+adfstep2cnew  adf
+step2cdbnew okuma adı
+azuresqldb  tıklayıp açtık
+server name step2cdbnew.database.windows.net geldi
+soldan query editor açarız login oluruz
+biz sqlservermanagement studio ile girelim
+servername buraya yapıştırıp login oluruz
+uyarı verirse ip için login ol diye
+azure portalde firewall settingste add client ip deriz
+şimdi tekrar deneyince bağlanırız
+AZURE_SQL_DB geldi içinde sampletablolar var
+artık management studiodan gidebiliriz
+
+ADF first time:
+İlk ADF kuralım. Data Factoriese gidelim
+subcription seçelim. adfstep2cnew 
+author & monitorü açarız
+overview kısmında create pipeline, dataflow, pipeline from template
+copy data, configure SSIS , code repository var
+
+
+
+Azure Data Factory: Create Linked Services
+Linked services in Azure Data Factory:
+
+A data factory can have one or more pipelines. A pipeline is a logical grouping of activities 
+that together perform a task. The activities in a pipeline define actions to perform on your data. For example, you might use a copy activity to copy data from SQL Server to Azure Blob storage. Then, you might use a Hive activity that runs a Hive script on an Azure HDInsight cluster to process data from Blob storage to produce output data. Finally, you might use a second copy activity to copy the output data to Azure SQL Data Warehouse, on top of which business intelligence (BI) reporting solutions are built. For more information about pipelines and activities, see Pipelines and activities in Azure Data Factory.
+
+Now, a dataset is a named view of data that simply points or references the data you want to use 
+in your activities as inputs and outputs.
+
+Before you create a dataset, you must create a linked service to link your data store to the 
+data factory. Linked services are much like connection strings, which define the 
+connection information needed for Data Factory to connect to external resources. 
+Think of it this way; the dataset represents the structure of the data within the 
+linked data stores, and the linked service defines the connection to the data source.
+
+Create Linked Services:
+Storage accounts kısmına gidelim
+subscriptio seçelim
+sastep2cadf açalım create container diyelim buna ad verelim
+data dedik adına
+şimdi new pipeline diyelim adına copydata from sql to sa dedik
+activities açalım   move & transform diyelim
+copy data sürükleyip ortaya bıraktık altta açılan source kısmına
+geldik source dataset geldi linked service kısmına geçtik
+soldaki en altta yer alan mavi çanta 
++ ile linked service eklemeye çalışıyoruz
+data storelar var azure blob storage seçtik
+ad verdik azureblobstorage_ls
+connect viaintegration autoresolveintegrationruntime seçtik
+account key seçtik
+
+subscription pay as you go 
+
+storage account name sastep2cadf seçtik
+create ettik linked service oluştu
+şimdi diğer linked service oluşturalım
+onda da azure sql database seçtik
+azuresqldb_ls dedik adına
+ayarları aynı verdik
+servername step2cdbnew dedik
+db name azuresqldb dedik
+authentication sql dedik kullanıcı tanımladık
+iki linked server da geldi
+
+create dataset:
+soldaki kalem simgesine geliriz
+dataset new deriz 
+customer tablomuz var azuersqldbde
+o yüzden azure sql database seçeriz dataset name veririz
+azuredsqltable_customer
+azuresqldb_ls seçeriz linked service için
+table name için.dbo.customer tanımlarız datayı alacağımız tabloyu.
+
+bir tane daha dataset oluşturalım
+azure blob storage seçelim ve delimited text seçip continue diyelim
+ad verelim delimited customer
+linkediservice için azureblob_ls seçtik
+filepath olarak data seçtik
+tamam dedik
+
+create pipeline :
+üstte oluşturmuştuk copydata diye
+sourcea gidelim
+azuresql customer seçelim
+use query table dedik
+sink kısmına da delimited olanı verdik destionation kısmı için
+mapping kısmına geçtik
+import schema dedik
+
+sink tarafı için filename belirlemek lazım
+delimited textcustomer açalım soldaki datasetten
+file kısmına gelip customer.cvs dedik
+
+şimdi publish diyelim
+şimdi containera gidelim
+data adlı container geldi içini boş görüyoruz
+add trigger dedik runningi görüyoruz
+şimdi monitorden bakınca çalıştığını görürüz
+containera gelip bakınca şimdi customer.csvnin oluşturulduğunu
+görebiliriz edit deyince içindeki datayı görürüz
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------
+Kaynak 
+
+https://www.udemy.com/course/azure-data-factory-use-cases/learn/lecture/21151374?start=0#overview
